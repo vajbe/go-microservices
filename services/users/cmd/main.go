@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"go-microservices/users/internal/config"
-	"go-microservices/users/internal/middleware"
+	"go-microservices/users/internal/middleware/logging"
 	"go-microservices/users/internal/routes"
 
 	"github.com/gorilla/mux"
@@ -19,7 +19,7 @@ func main() {
 	router := mux.NewRouter()
 
 	// Apply middlewares
-	router.Use(middleware.LoggingMiddleware)
+	router.Use(logging.LoggingMiddleware)
 
 	// Register routes
 	routes.RegisterUserRoutes(router)

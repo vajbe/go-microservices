@@ -11,4 +11,5 @@ func RegisterUserRoutes(router *mux.Router) {
 
 	// Define user service routes
 	router.HandleFunc("/users", userHandler.GetUsers).Methods("GET")
+	router.HandleFunc("/users", userHandler.AddUser).Methods("POST")
 }
