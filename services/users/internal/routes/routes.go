@@ -2,6 +2,7 @@ package routes
 
 import (
 	handlers "go-microservices/users/internal/handler"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -9,9 +10,20 @@ import (
 func RegisterUserRoutes(router *mux.Router) {
 	userHandler := handlers.NewUserHandler()
 
-	// Define user service routes
-	router.HandleFunc("/users", userHandler.GetUsers).Methods("GET")
-	router.HandleFunc("/users/{id}", userHandler.GetUser).Methods("GET")
-	router.HandleFunc("/users", userHandler.AddUser).Methods("POST")
-	router.HandleFunc("/users/{id}", userHandler.UpdateUser).Methods("PUT")
+	// Define user service routes in a more concise way
+	routes := []struct {
+		method      string
+		path        string
+		handlerFunc func(http.ResponseWriter, *http.Request)
+	}{
+		{"GET", "/users", userHandler.GetUsers},
+		{"GET", "/users/{id}", userHandler.GetUser},
+		{"POST", "/users", userHandler.AddUser},
+		{"PUT", "/users/{id}", userHandler.UpdateUser},
+	}
+
+	// Register all routes in a loop to avoid repetition
+	for _, route := range routes {
+		router.HandleFunc(route.path, route.handlerFunc).Methods(route.method)
+	}
 }
