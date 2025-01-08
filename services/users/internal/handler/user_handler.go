@@ -74,3 +74,23 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	response.Error(w, fmt.Sprintf("User with ID: %s not found", idStr), http.StatusNotFound)
 }
+
+func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+
+	for _, u := range users {
+		id, err := strconv.Atoi(idStr)
+
+		if err != nil {
+			response.Error(w, "Invalid ID Format.", http.StatusBadRequest)
+			return
+		}
+
+		if u["id"] == id {
+			response.Success(w, fmt.Sprintf("User %d retrieved successfully.", id), u)
+			return
+		}
+	}
+	response.Error(w, fmt.Sprintf("User with ID: %s not found", idStr), http.StatusNotFound)
+}
