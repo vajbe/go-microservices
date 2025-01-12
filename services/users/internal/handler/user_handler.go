@@ -1,13 +1,16 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"go-microservices/users/internal/middleware/response"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/jackc/pgx/v5"
 )
 
 type UserHandler struct{}
@@ -28,6 +31,26 @@ func init() {
 }
 
 func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+
+	urlExample := "postgres://admin:admin@localhost:5432/admin"
+	conn, err := pgx.Connect(context.Background(), urlExample)
+	//  conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer conn.Close(context.Background())
+
+	var name string
+	var weight int64
+	err = conn.QueryRow(context.Background(), "select name, weight from widgets where id=$1", 42).Scan(&name, &weight)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		/* os.Exit(1) */
+	}
+
+	fmt.Println(name, weight)
+
 	response.Success(w, "Users have been retrieved successfully.", users)
 }
 
