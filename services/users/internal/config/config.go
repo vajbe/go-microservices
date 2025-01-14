@@ -6,7 +6,11 @@ import (
 )
 
 type Config struct {
-	Port string
+	Port    string
+	Db_User string
+	Db_Pwd  string
+	Db_Port string
+	Db_URL  string
 }
 
 func Load() Config {
@@ -15,6 +19,31 @@ func Load() Config {
 		port = "8080" // Default port
 	}
 
-	log.Printf("Configuration loaded: PORT=%s", port)
-	return Config{Port: port}
+	db_user := os.Getenv("USER_SERVICE_DB_USER")
+
+	if db_user == "" {
+		db_user = "admin" // Default user
+	}
+
+	db_pwd := os.Getenv("USER_SERVICE_DB_PWD")
+
+	if db_pwd == "" {
+		db_pwd = "admin" // Default password
+	}
+
+	db_port := os.Getenv("USER_SERVICE_DB_PORT")
+
+	if db_port == "" {
+		db_port = "5432" // Default password
+	}
+
+	db_url := os.Getenv("USER_SERVICE_DB_URL")
+
+	if db_url == "" {
+		db_url = "localhost" // Default password
+	}
+
+	cfg := Config{Port: port, Db_User: db_user, Db_Pwd: db_pwd, Db_Port: db_port, Db_URL: db_url}
+	log.Printf("Configuration loaded: %+v", cfg)
+	return cfg
 }

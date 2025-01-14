@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"go-microservices/users/internal/config"
+	"go-microservices/users/internal/db"
 	"go-microservices/users/internal/middleware/logging"
 	"go-microservices/users/internal/routes"
 
@@ -14,6 +15,10 @@ import (
 func main() {
 	// Load configuration
 	cfg := config.Load()
+
+	// Initialize Table
+
+	db.InitializeDb(cfg)
 
 	// Initialize router
 	router := mux.NewRouter()
