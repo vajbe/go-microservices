@@ -34,7 +34,11 @@ func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	db.AddUser(newUser)
+	_, err = db.AddUser(newUser)
+	if err != nil {
+		response.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	response.Success(w, "User has been added successfully.", newUser)
 }
 
