@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"go-microservices/users/internal/config"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -42,7 +41,8 @@ func InitializeDb(cfg config.Config) {
 
 func executeSQLFromFile(ctx context.Context, pool *pgxpool.Pool, filePath string) error {
 	// Read the SQL file
-	sqlBytes, err := ioutil.ReadFile(filePath)
+	sqlBytes, err := os.ReadFile(filePath)
+
 	if err != nil {
 		return fmt.Errorf("failed to read SQL file: %w", err)
 	}
