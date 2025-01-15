@@ -41,13 +41,11 @@ func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
-
 	response.Error(w, fmt.Sprintf("User with ID: %s not found", idStr), http.StatusNotFound)
 }
 
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
-
 	response.Error(w, fmt.Sprintf("User with ID: %s not found", idStr), http.StatusNotFound)
 }
