@@ -3,12 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"go-microservices/users/internal/config"
 	"go-microservices/users/internal/db"
 	"go-microservices/users/internal/middleware/response"
 	"go-microservices/users/internal/types"
 
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -21,8 +19,12 @@ func NewUserHandler() *UserHandler {
 }
 
 func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	log.Printf("\n%+v", config.GetConfig())
-	response.Success(w, "Users have been retrieved successfully.", nil)
+	users, err := db.GetUsers()
+	if err != nil {
+		response.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	response.Success(w, "Users have been retrieved successfully.", users)
 }
 
 func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
