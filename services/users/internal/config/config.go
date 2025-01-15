@@ -5,6 +5,8 @@ import (
 	"os"
 )
 
+var cfg Config
+
 type Config struct {
 	Port    string
 	Db_User string
@@ -43,7 +45,11 @@ func Load() Config {
 		db_url = "localhost" // Default password
 	}
 
-	cfg := Config{Port: port, Db_User: db_user, Db_Pwd: db_pwd, Db_Port: db_port, Db_URL: db_url}
+	cfg = Config{Port: port, Db_User: db_user, Db_Pwd: db_pwd, Db_Port: db_port, Db_URL: db_url}
 	log.Printf("Configuration loaded: %+v", cfg)
+	return cfg
+}
+
+func GetConfig() Config {
 	return cfg
 }

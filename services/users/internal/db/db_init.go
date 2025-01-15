@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"go-microservices/users/internal/config"
 	"io/ioutil"
 	"log"
@@ -12,18 +13,20 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+var dbPool *pgxpool.Pool
+
 func InitializeDb(cfg config.Config) {
 
 	connString := "postgres://" + cfg.Db_User + ":" + cfg.Db_Pwd + "@" + cfg.Db_URL + ":" + cfg.Db_Port + "/admin?sslmode=disable"
-
+	var err error
 	ctx := context.Background()
-	pool, err := pgxpool.New(ctx, connString)
+	dbPool, err = pgxpool.New(ctx, connString)
 
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	defer pool.Close()
+	/* defer dbPool.Close() */
 
 	exePath, err := os.Getwd()
 	if err != nil {
@@ -31,7 +34,7 @@ func InitializeDb(cfg config.Config) {
 	}
 	baseDir := filepath.Dir(exePath)
 	filePath := filepath.Join(baseDir, "users", "internal", "db", "schema.sql")
-	if err = executeSQLFromFile(ctx, pool, filePath); err != nil {
+	if err = executeSQLFromFile(ctx, dbPool, filePath); err != nil {
 		log.Fatalf("Failed to execute SQL file %v", err)
 	}
 	log.Println("SQL file executed successfully.")
@@ -53,4 +56,8 @@ func executeSQLFromFile(ctx context.Context, pool *pgxpool.Pool, filePath string
 
 	log.Printf("Executed SQL file: %s", filePath)
 	return nil
+}
+
+func GetDBPool() *pgxpool.Pool {
+	return dbPool
 }

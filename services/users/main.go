@@ -12,12 +12,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var (
+	DB_CONN_URL string
+)
+
 func main() {
 	// Load configuration
 	cfg := config.Load()
 
-	// Initialize Table
-
+	// Initialize Table and dbs
 	db.InitializeDb(cfg)
 
 	// Initialize router
