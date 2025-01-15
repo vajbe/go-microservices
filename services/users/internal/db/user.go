@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go-microservices/users/internal/types"
+	"log"
 	"time"
 )
 
@@ -22,7 +23,6 @@ func AddUser(user types.User) (types.User, error) {
 
 func GetUsers() ([]types.User, error) {
 	pool := GetDBPool()
-
 	rows, err := pool.Query(context.Background(), "SELECT * FROM users") // Replace "your_table_name" with your actual table name
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
@@ -46,4 +46,21 @@ func GetUsers() ([]types.User, error) {
 		return nil, fmt.Errorf("error iterating rows: %w", err)
 	}
 	return users, nil
+}
+
+func UpdateUser(user types.User) error {
+	pool := GetDBPool()
+	query := `UPDATE users set name=$1, email=$2 where id=$3`
+	tag, err := pool.Exec(context.Background(), query, user.Name, user.Email, user.Id)
+	if err != nil {
+		return fmt.Errorf("error update record: %w", err)
+	}
+
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("no record found with id %d", user.Id)
+	}
+
+	log.Print("User updated successfuly.")
+
+	return nil
 }

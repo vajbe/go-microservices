@@ -8,8 +8,6 @@ import (
 	"go-microservices/users/internal/types"
 
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 type UserHandler struct{}
@@ -31,7 +29,7 @@ func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 	var newUser types.User
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		response.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	_, err = db.AddUser(newUser)
@@ -43,13 +41,32 @@ func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	idStr := vars["id"]
-	response.Error(w, fmt.Sprintf("User with ID: %s not found", idStr), http.StatusNotFound)
+	/* 	vars := mux.Vars(r) */
+	/* idStr := vars["id"] */
+	var newUser types.User
+	err := json.NewDecoder(r.Body).Decode(&newUser)
+	if err != nil {
+		response.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = db.UpdateUser(newUser)
+	if err != nil {
+		response.Error(w, fmt.Sprintf("failed to update record: %s ", err.Error()), http.StatusInternalServerError)
+	}
 }
 
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	idStr := vars["id"]
-	response.Error(w, fmt.Sprintf("User with ID: %s not found", idStr), http.StatusNotFound)
+	/* 	vars := mux.Vars(r)
+	   	idStr := vars["id"]
+	   	var newUser types.User
+	   	err := json.NewDecoder(r.Body).Decode(&newUser)
+	   	if err != nil {
+	   		response.Error(w, err.Error(), http.StatusBadRequest)
+	   		return
+	   	}
+	   	err = db.UpdateUser(newUser)
+	   	if err != nil {
+	   		response.Error(w, fmt.Sprintf("failed to update record: %s ", err.Error()), http.StatusInternalServerError)
+	   	} */
+
 }
