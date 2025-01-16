@@ -10,7 +10,7 @@ RUN go mod download
 COPY . .
 
 # Build the binary
-RUN go build -o /app/go-microservices-users ./cmd
+RUN go build -o /app/go-microservices-users ./
 
 # Default command to run the binary
 EXPOSE 8080

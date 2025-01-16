@@ -26,17 +26,32 @@ func InitializeDb(cfg config.Config) {
 	}
 
 	/* defer dbPool.Close() */
-
-	exePath, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Failed to get executable path: %v", err)
-	}
-	baseDir := filepath.Dir(exePath)
-	filePath := filepath.Join(baseDir, "users", "internal", "db", "schema.sql")
+	filePath := getSchemaFilePath()
 	if err = executeSQLFromFile(ctx, dbPool, filePath); err != nil {
 		log.Fatalf("Failed to execute SQL file %v", err)
 	}
 	log.Println("SQL file executed successfully.")
+}
+
+func getSchemaFilePath() string {
+	// Check for an environment variable first
+	if path := os.Getenv("SCHEMA_FILE_PATH"); path != "" {
+		return path
+	}
+
+	// Fallback to executable-based path
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Fatalf("Failed to get executable path: %v", err)
+	}
+	baseDir := filepath.Dir(exePath)
+	filePath := filepath.Join(baseDir, "internal", "db", "schema.sql")
+
+	// Validate the file exists
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		log.Fatalf("Schema file not found at path: %s", filePath)
+	}
+	return filePath
 }
 
 func executeSQLFromFile(ctx context.Context, pool *pgxpool.Pool, filePath string) error {

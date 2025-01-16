@@ -7,6 +7,8 @@ services:
       - "8080:8080"
     environment:
       - USER_SERVICE_PORT=8080
+      - USER_SERVICE_DB_HOST=postgres
+      - SCHEMA_FILE_PATH=/app/internal/db/schema.sql
     networks:
       - app-network
 
@@ -17,12 +19,14 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_USER: admin # Username
-      POSTGRES_PASSWORD:  admin # Empty password
+      POSTGRES_PASSWORD: admin # Empty password
       POSTGRES_DB: admin # Default database
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./pg_hba.conf:/etc/postgresql/conf.d/pg_hba.conf # Mount custom pg_hba.conf
     command: postgres -c "hba_file=/etc/postgresql/conf.d/pg_hba.conf" # Use custom pg_hba.conf
+    networks:
+      - app-network
   # auth-service:
   #   build:
   #     context: ./services/auth

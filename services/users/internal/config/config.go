@@ -39,7 +39,7 @@ func Load() Config {
 		db_port = "5432" // Default password
 	}
 
-	db_url := os.Getenv("USER_SERVICE_DB_URL")
+	db_url := os.Getenv("USER_SERVICE_DB_HOST")
 
 	if db_url == "" {
 		db_url = "localhost" // Default password
