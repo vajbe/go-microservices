@@ -81,3 +81,20 @@ func GetUser(user types.User) (types.User, error) {
 
 	return resultUser, nil
 }
+
+func DeleteUser(user types.User) error {
+	pool := GetDBPool()
+	query := `DELETE FROM USERS where id=$1`
+	tag, err := pool.Exec(context.Background(), query, user.Id)
+	if err != nil {
+		return fmt.Errorf("error DELETE record: %w", err)
+	}
+
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("no record found with id %d", user.Id)
+	}
+
+	log.Print("User deleted successfuly.")
+
+	return nil
+}

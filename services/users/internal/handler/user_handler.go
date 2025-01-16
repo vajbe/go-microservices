@@ -75,3 +75,21 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 	response.Success(w, "User has been retrived successfully.", resultUser)
 }
+
+func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	var newUser types.User
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		response.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	newUser.Id = id
+	err = db.DeleteUser(newUser)
+	if err != nil {
+		response.Error(w, fmt.Sprintf("failed to delete a record: %s ", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	response.Success(w, "User has been deleted successfully.", newUser)
+}
