@@ -6,6 +6,8 @@ import (
 	"go-microservices/users/internal/types"
 	"log"
 	"time"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func AddUser(user types.User) (types.User, error) {
@@ -23,7 +25,7 @@ func AddUser(user types.User) (types.User, error) {
 
 func GetUsers() ([]types.User, error) {
 	pool := GetDBPool()
-	rows, err := pool.Query(context.Background(), "SELECT * FROM users") // Replace "your_table_name" with your actual table name
+	rows, err := pool.Query(context.Background(), "SELECT * FROM users")
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
@@ -63,4 +65,19 @@ func UpdateUser(user types.User) error {
 	log.Print("User updated successfuly.")
 
 	return nil
+}
+
+func GetUser(user types.User) (types.User, error) {
+	pool := GetDBPool()
+	query := "SELECT * FROM users where id=$1"
+	var resultUser types.User
+	err := pool.QueryRow(context.Background(), query, user.Id).Scan(&resultUser.Id, &resultUser.Name, &resultUser.Email, &resultUser.CreatedAt)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return resultUser, fmt.Errorf("no record found for id: %d", user.Id)
+		}
+		return resultUser, fmt.Errorf("failed to execute query: %w", err)
+	}
+
+	return resultUser, nil
 }
