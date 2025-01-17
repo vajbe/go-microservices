@@ -1,4 +1,4 @@
-**Go Based Microservices demonstration:**
+**Go Based Microservices Demonstration:**
 
 Tech Stack:
   1. Go lang
