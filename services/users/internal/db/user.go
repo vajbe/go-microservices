@@ -12,11 +12,11 @@ import (
 
 func AddUser(user types.User) (types.User, error) {
 	pool := GetDBPool()
-	query := `INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id, created_at`
+	query := `INSERT INTO users (name, email, password_hash, phone_number) VALUES ($1, $2, $3, $4) RETURNING id, created_at`
 	var id int
 	var createdAt time.Time
-
-	err := pool.QueryRow(context.Background(), query, user.Name, user.Email).Scan(&id, &createdAt)
+	/* Generate password hash here */
+	err := pool.QueryRow(context.Background(), query, user.Name, user.Email, user.Password, user.Phone).Scan(&id, &createdAt)
 	if err != nil {
 		return user, fmt.Errorf("failed to insert record: %w", err)
 	}
