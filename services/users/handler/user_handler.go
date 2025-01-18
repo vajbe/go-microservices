@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-microservices/users/db"
-	"go-microservices/users/middleware/response"
+	res "go-microservices/users/middleware"
 	"go-microservices/users/types"
 
 	"net/http"
@@ -21,40 +21,40 @@ func NewUserHandler() *UserHandler {
 func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := db.GetUsers()
 	if err != nil {
-		response.Error(w, err.Error(), http.StatusInternalServerError)
+		res.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	response.Success(w, "Users have been retrieved successfully.", users)
+	res.Success(w, "Users have been retrieved successfully.", users)
 }
 
 func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 	var newUser types.User
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
-		response.Error(w, err.Error(), http.StatusBadRequest)
+		res.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	res, err := db.AddUser(newUser)
+	resp, err := db.AddUser(newUser)
 	if err != nil {
-		response.Error(w, err.Error(), http.StatusInternalServerError)
+		res.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	response.Success(w, "User has been added successfully.", res)
+	res.Success(w, "User has been added successfully.", resp)
 }
 
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var newUser types.User
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
-		response.Error(w, err.Error(), http.StatusBadRequest)
+		res.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	err = db.UpdateUser(newUser)
 	if err != nil {
-		response.Error(w, fmt.Sprintf("failed to update record: %s ", err.Error()), http.StatusInternalServerError)
+		res.Error(w, fmt.Sprintf("failed to update record: %s ", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	response.Success(w, "User has been updated successfully.", newUser)
+	res.Success(w, "User has been updated successfully.", newUser)
 }
 
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -64,10 +64,10 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	newUser.Id = idStr
 	resultUser, err := db.GetUser(newUser)
 	if err != nil {
-		response.Error(w, fmt.Sprintf("failed to retrived record: %s ", err.Error()), http.StatusInternalServerError)
+		res.Error(w, fmt.Sprintf("failed to retrived record: %s ", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	response.Success(w, "User has been retrived successfully.", resultUser)
+	res.Success(w, "User has been retrived successfully.", resultUser)
 }
 
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -77,23 +77,23 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	newUser.Id = idStr
 	err := db.DeleteUser(newUser)
 	if err != nil {
-		response.Error(w, fmt.Sprintf("failed to delete a record: %s ", err.Error()), http.StatusInternalServerError)
+		res.Error(w, fmt.Sprintf("failed to delete a record: %s ", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	response.Success(w, "User has been deleted successfully.", newUser)
+	res.Success(w, "User has been deleted successfully.", newUser)
 }
 
 func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var userLogin types.UserLogin
 	err := json.NewDecoder(r.Body).Decode(&userLogin)
 	if err != nil {
-		response.Error(w, err.Error(), http.StatusBadRequest)
+		res.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	resp, err := db.Login(userLogin)
 	if err != nil {
-		response.Error(w, fmt.Sprintf("failed to login: %s ", err.Error()), http.StatusInternalServerError)
+		res.Error(w, fmt.Sprintf("failed to login: %s ", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	response.Success(w, "User has been logged in successfully.", resp)
+	res.Success(w, "User has been logged in successfully.", resp)
 }
