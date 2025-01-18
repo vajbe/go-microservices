@@ -16,38 +16,42 @@ type Config struct {
 }
 
 func Load() Config {
-	port := os.Getenv("USER_SERVICE_PORT")
-	if port == "" {
-		port = "8080" // Default port
+	// Get the current environment (default to "development" if not set)
+	env := getEnv("ENV", "development")
+
+	// Load configuration based on the environment
+	switch env {
+	case "development":
+		cfg = Config{
+			Port:    getEnv("USER_SERVICE_PORT", "8080"),
+			Db_User: getEnv("USER_SERVICE_DB_USER", "admin"),
+			Db_Pwd:  getEnv("USER_SERVICE_DB_PWD", "admin"),
+			Db_Port: getEnv("USER_SERVICE_DB_PORT", "5432"),
+			Db_URL:  getEnv("USER_SERVICE_DB_HOST", "localhost"),
+		}
+	case "production":
+		cfg = Config{
+			Port:    getEnv("USER_SERVICE_PORT", "80"),
+			Db_User: getEnv("USER_SERVICE_DB_USER", "admin"),
+			Db_Pwd:  getEnv("USER_SERVICE_DB_PWD", "admin"),
+			Db_Port: getEnv("USER_SERVICE_DB_PORT", "5432"),
+			Db_URL:  getEnv("USER_SERVICE_DB_HOST", "localhost"),
+		}
+	default:
+		log.Fatalf("Unknown environment: %s", env)
 	}
 
-	db_user := os.Getenv("USER_SERVICE_DB_USER")
-
-	if db_user == "" {
-		db_user = "admin" // Default user
-	}
-
-	db_pwd := os.Getenv("USER_SERVICE_DB_PWD")
-
-	if db_pwd == "" {
-		db_pwd = "admin" // Default password
-	}
-
-	db_port := os.Getenv("USER_SERVICE_DB_PORT")
-
-	if db_port == "" {
-		db_port = "5432" // Default password
-	}
-
-	db_url := os.Getenv("USER_SERVICE_DB_HOST")
-
-	if db_url == "" {
-		db_url = "localhost" // Default password
-	}
-
-	cfg = Config{Port: port, Db_User: db_user, Db_Pwd: db_pwd, Db_Port: db_port, Db_URL: db_url}
-	log.Printf("Configuration loaded: %+v", cfg)
+	log.Printf("Configuration loaded for environment '%s': %+v", env, cfg)
 	return cfg
+}
+
+// Helper function to get environment variables or return default values
+func getEnv(key, defaultVal string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		return defaultVal
+	}
+	return val
 }
 
 func GetConfig() Config {

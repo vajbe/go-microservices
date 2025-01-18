@@ -27,6 +27,13 @@ services:
     command: postgres -c "hba_file=/etc/postgresql/conf.d/pg_hba.conf" # Use custom pg_hba.conf
     networks:
       - app-network
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-network
   # auth-service:
   #   build:
   #     context: ./services/auth
