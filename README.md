@@ -15,6 +15,7 @@ Authentication (JWT, OAuth2)
 Pagination, filtering, and sorting
 
 **Phase 2 Microservices Architecture**
+
 Service-to-service communication (REST, gRPC, Kafka)
 API gateway
 Service discovery and orchestration (e.g., Kubernetes)
