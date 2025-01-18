@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
-	"go-microservices/users/internal/types"
+	"go-microservices/users/types"
 	"log"
 
 	"github.com/go-playground/validator/v10"

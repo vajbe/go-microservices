@@ -1,7 +1,7 @@
 package routes
 
 import (
-	handlers "go-microservices/users/internal/handler"
+	handlers "go-microservices/users/handler"
 	"net/http"
 
 	"github.com/gorilla/mux"

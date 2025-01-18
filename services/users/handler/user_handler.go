@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"go-microservices/users/internal/db"
-	"go-microservices/users/internal/middleware/response"
-	"go-microservices/users/internal/types"
+	"go-microservices/users/db"
+	"go-microservices/users/middleware/response"
+	"go-microservices/users/types"
 
 	"net/http"
 
@@ -34,12 +34,12 @@ func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 		response.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	_, err = db.AddUser(newUser)
+	res, err := db.AddUser(newUser)
 	if err != nil {
 		response.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	response.Success(w, "User has been added successfully.", newUser)
+	response.Success(w, "User has been added successfully.", res)
 }
 
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {

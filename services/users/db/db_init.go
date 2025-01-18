@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"go-microservices/users/internal/config"
+	"go-microservices/users/config"
 	"log"
 	"os"
 	"path/filepath"

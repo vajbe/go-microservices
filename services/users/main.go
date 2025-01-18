@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"go-microservices/users/internal/config"
-	"go-microservices/users/internal/db"
-	"go-microservices/users/internal/middleware/logging"
-	"go-microservices/users/internal/routes"
+	"go-microservices/users/config"
+	"go-microservices/users/db"
+	"go-microservices/users/middleware/logging"
+	"go-microservices/users/routes"
 
 	"github.com/gorilla/mux"
 )
