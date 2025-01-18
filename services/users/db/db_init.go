@@ -7,7 +7,6 @@ import (
 	"go-microservices/users/config"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -15,7 +14,6 @@ import (
 var dbPool *pgxpool.Pool
 
 func InitializeDb(cfg config.Config) {
-
 	connString := "postgres://" + cfg.Db_User + ":" + cfg.Db_Pwd + "@" + cfg.Db_URL + ":" + cfg.Db_Port + "/admin?sslmode=disable"
 	var err error
 	ctx := context.Background()
@@ -26,32 +24,19 @@ func InitializeDb(cfg config.Config) {
 	}
 
 	/* defer dbPool.Close() */
-	filePath := getSchemaFilePath()
+	filePath := getSchemaFilePath(cfg)
 	if err = executeSQLFromFile(ctx, dbPool, filePath); err != nil {
 		log.Fatalf("Failed to execute SQL file %v", err)
 	}
 	log.Println("SQL file executed successfully.")
 }
 
-func getSchemaFilePath() string {
+func getSchemaFilePath(cfg config.Config) string {
 	// Check for an environment variable first
-	if path := os.Getenv("SCHEMA_FILE_PATH"); path != "" {
+	if path := cfg.Schema_Path; path != "" {
 		return path
 	}
-
-	// Fallback to executable-based path
-	exePath, err := os.Executable()
-	if err != nil {
-		log.Fatalf("Failed to get executable path: %v", err)
-	}
-	baseDir := filepath.Dir(exePath)
-	filePath := filepath.Join(baseDir, "internal", "db", "schema.sql")
-
-	// Validate the file exists
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		log.Fatalf("Schema file not found at path: %s", filePath)
-	}
-	return filePath
+	return ""
 }
 
 func executeSQLFromFile(ctx context.Context, pool *pgxpool.Pool, filePath string) error {

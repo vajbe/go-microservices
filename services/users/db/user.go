@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"go-microservices/users/types"
+	"go-microservices/users/utils"
 	"log"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5"
@@ -17,7 +19,6 @@ func AddUser(user types.User) (types.UserResponse, error) {
 	var id string
 	var createdAt int64
 	/* Generate password hash here */
-
 	validator := validator.New()
 	err := validator.Struct(user)
 
@@ -149,11 +150,27 @@ func Login(user types.UserLogin) (types.UserLoginResponse, error) {
 		return types.UserLoginResponse{Name: user.Name}, err
 	}
 	isValid, err := verifyUser(user)
+
 	if err != nil {
 		return types.UserLoginResponse{Name: user.Name}, err
 	}
 	if !isValid {
 		return types.UserLoginResponse{Name: user.Name}, fmt.Errorf("invalid credentials")
+	}
+
+	// Generate JWT
+	jwtToken, err := utils.GenerateJwtToken(user.Name)
+	if err != nil {
+		return types.UserLoginResponse{Name: user.Name}, err
+	}
+
+	fmt.Printf("Token generated is %s\n", jwtToken)
+
+	// Generate Redis key
+	key := fmt.Sprintf("jwt:%s", jwtToken)
+	err = REDIS_CLIENT.Set(context.Background(), key, jwtToken, 10*time.Second).Err()
+	if err != nil {
+		return types.UserLoginResponse{Name: user.Name}, err
 	}
 	return types.UserLoginResponse{Name: user.Name}, nil
 }
