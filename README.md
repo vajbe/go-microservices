@@ -26,4 +26,4 @@ Phase 2: Implement Order Management and Inventory microservices.
 Phase 3: Add Notification microservices.
 Phase 4: Set up API Gateway, integrate service discovery, and deploy using Docker/Kubernetes.
 Phase 5: Implement Admin Dashboard and Reporting microservices.
-Phase 6: Add search functionality and optimize for scalability.****
+Phase 6: Add search functionality and optimize for scalability.
