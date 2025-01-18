@@ -8,6 +8,7 @@ Tech Stack:
   5. Kubernetes
   6. Redis
 
+**Domain** : E-commerce
 
 **Key Concepts to be demonstrated:**
 **Phase 1**
