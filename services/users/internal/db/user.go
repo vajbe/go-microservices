@@ -5,22 +5,42 @@ import (
 	"fmt"
 	"go-microservices/users/internal/types"
 	"log"
-	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
-func AddUser(user types.User) (types.User, error) {
+func AddUser(user types.User) (types.UserResponse, error) {
 	pool := GetDBPool()
 	query := `INSERT INTO users (name, email, password_hash, phone_number) VALUES ($1, $2, $3, $4) RETURNING id, created_at`
-	var id int
-	var createdAt time.Time
+	var id string
+	var createdAt int64
 	/* Generate password hash here */
-	err := pool.QueryRow(context.Background(), query, user.Name, user.Email, user.Password, user.Phone).Scan(&id, &createdAt)
+
+	validator := validator.New()
+	err := validator.Struct(user)
+
 	if err != nil {
-		return user, fmt.Errorf("failed to insert record: %w", err)
+		return types.UserResponse{}, fmt.Errorf("validation failed: %w", err)
 	}
-	return user, nil
+
+	password_hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return types.UserResponse{Name: user.Name, Email: user.Email}, err
+	}
+
+	err = pool.QueryRow(context.Background(), query, user.Name, user.Email, string(password_hash), user.Phone).Scan(&id, &createdAt)
+	if err != nil {
+		return types.UserResponse{Name: user.Name, Email: user.Email}, fmt.Errorf("failed to insert record: %w", err)
+	}
+	response := types.UserResponse{
+		Name:  user.Name,
+		Email: user.Email,
+		Phone: user.Phone,
+		Id:    id,
+	}
+	return response, nil
 }
 
 func GetUsers() ([]types.User, error) {
@@ -33,7 +53,7 @@ func GetUsers() ([]types.User, error) {
 	var users []types.User
 	for rows.Next() {
 		var user types.User
-		var createdAt time.Time
+		var createdAt int64
 		var id int
 		// Scan each row into the User struct
 		err := rows.Scan(&id, &user.Name, &user.Email, &createdAt)
@@ -59,7 +79,7 @@ func UpdateUser(user types.User) error {
 	}
 
 	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("no record found with id %d", user.Id)
+		return fmt.Errorf("no record found with id %s", user.Id)
 	}
 
 	log.Print("User updated successfuly.")
@@ -74,7 +94,7 @@ func GetUser(user types.User) (types.User, error) {
 	err := pool.QueryRow(context.Background(), query, user.Id).Scan(&resultUser.Id, &resultUser.Name, &resultUser.Email, &resultUser.CreatedAt)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return resultUser, fmt.Errorf("no record found for id: %d", user.Id)
+			return resultUser, fmt.Errorf("no record found for id: %s", user.Id)
 		}
 		return resultUser, fmt.Errorf("failed to execute query: %w", err)
 	}
@@ -91,7 +111,7 @@ func DeleteUser(user types.User) error {
 	}
 
 	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("no record found with id %d", user.Id)
+		return fmt.Errorf("no record found with id %s", user.Id)
 	}
 
 	log.Print("User deleted successfuly.")

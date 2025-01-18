@@ -6,7 +6,6 @@ import (
 	"go-microservices/users/internal/db"
 	"go-microservices/users/internal/middleware/response"
 	"go-microservices/users/internal/types"
-	"strconv"
 
 	"net/http"
 
@@ -62,12 +61,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
 	var newUser types.User
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		response.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	newUser.Id = id
+	newUser.Id = idStr
 	resultUser, err := db.GetUser(newUser)
 	if err != nil {
 		response.Error(w, fmt.Sprintf("failed to retrived record: %s ", err.Error()), http.StatusInternalServerError)
@@ -80,13 +74,8 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
 	var newUser types.User
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		response.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	newUser.Id = id
-	err = db.DeleteUser(newUser)
+	newUser.Id = idStr
+	err := db.DeleteUser(newUser)
 	if err != nil {
 		response.Error(w, fmt.Sprintf("failed to delete a record: %s ", err.Error()), http.StatusInternalServerError)
 		return
