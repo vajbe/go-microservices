@@ -82,3 +82,18 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 	response.Success(w, "User has been deleted successfully.", newUser)
 }
+
+func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var userLogin types.UserLogin
+	err := json.NewDecoder(r.Body).Decode(&userLogin)
+	if err != nil {
+		response.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	resp, err := db.Login(userLogin)
+	if err != nil {
+		response.Error(w, fmt.Sprintf("failed to login: %s ", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	response.Success(w, "User has been logged in successfully.", resp)
+}

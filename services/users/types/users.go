@@ -17,3 +17,15 @@ type UserResponse struct {
 	Phone string `json:"phone_number"`
 	Id    string `json:"id,omitempty"`
 }
+
+type UserLogin struct {
+	Name     string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+}
+
+type UserLoginResponse struct {
+	Name  string `json:"name,omitempty"`
+	Email string `json:"email,omitempty"`
+	Phone string `json:"phone_number"`
+	Id    string `json:"id,omitempty"`
+}

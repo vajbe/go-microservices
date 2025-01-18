@@ -21,6 +21,7 @@ func RegisterUserRoutes(router *mux.Router) {
 		{"POST", "/users", userHandler.AddUser},
 		{"PUT", "/users/{id}", userHandler.UpdateUser},
 		{"DELETE", "/users/{id}", userHandler.DeleteUser},
+		{"POST", "/login", userHandler.Login},
 	}
 
 	// Register all routes in a loop to avoid repetition

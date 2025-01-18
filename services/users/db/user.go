@@ -118,3 +118,42 @@ func DeleteUser(user types.User) error {
 
 	return nil
 }
+
+func verifyUser(user types.UserLogin) (bool, error) {
+	pool := GetDBPool()
+	var password_hash string
+
+	err := pool.QueryRow(context.Background(), `SELECT PASSWORD_HASH FROM USERS WHERE EMAIL=$1`, user.Name).Scan(&password_hash)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return false, fmt.Errorf("invalid credentials")
+		}
+		return false, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(password_hash), []byte(user.Password))
+	if err != nil {
+		if err == bcrypt.ErrMismatchedHashAndPassword {
+			return false, fmt.Errorf("invalid credentials")
+		}
+		return false, err
+	}
+
+	return true, nil
+}
+
+func Login(user types.UserLogin) (types.UserLoginResponse, error) {
+	validator := validator.New()
+	err := validator.Struct(user)
+	if err != nil {
+		return types.UserLoginResponse{Name: user.Name}, err
+	}
+	isValid, err := verifyUser(user)
+	if err != nil {
+		return types.UserLoginResponse{Name: user.Name}, err
+	}
+	if !isValid {
+		return types.UserLoginResponse{Name: user.Name}, fmt.Errorf("invalid credentials")
+	}
+	return types.UserLoginResponse{Name: user.Name}, nil
+}
