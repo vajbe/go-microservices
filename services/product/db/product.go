@@ -27,9 +27,10 @@ func AddProduct(product types.Product) (types.ProductResponse, error) {
 	return response, nil
 }
 
-func GetProducts(limit int, offset int) (types.ProductListingResponse, error) {
+func GetProducts(limit int, offset int, sortBy string, orderBy string) (types.ProductListingResponse, error) {
 	pool := GetDBPool()
-	rows, err := pool.Query(context.Background(), "SELECT ID, NAME, CATEGORY, PRICE, STOCK, DESCRIPTION FROM products LIMIT $1 OFFSET $2", limit, offset)
+	query := fmt.Sprintf("SELECT ID, NAME, CATEGORY, PRICE, STOCK, DESCRIPTION FROM products ORDER BY %s %s LIMIT $1 OFFSET $2", sortBy, orderBy)
+	rows, err := pool.Query(context.Background(), query, limit, offset)
 	if err != nil {
 		return types.ProductListingResponse{Offset: 0, Limit: 0, Result: []types.ProductResponse{}}, fmt.Errorf("failed to execute query: %w", err)
 	}
@@ -48,7 +49,8 @@ func GetProducts(limit int, offset int) (types.ProductListingResponse, error) {
 	if err := rows.Err(); err != nil {
 		return types.ProductListingResponse{Offset: 0, Limit: 0, Result: []types.ProductResponse{}}, fmt.Errorf("error iterating rows: %w", err)
 	}
-	return types.ProductListingResponse{Offset: limit, Limit: offset, Result: products}, nil
+	return types.ProductListingResponse{Offset: limit, Limit: offset,
+		Result: products, OrderBy: orderBy, SortBy: sortBy}, nil
 }
 
 /*func GetUser(user types.User) (types.User, error) {

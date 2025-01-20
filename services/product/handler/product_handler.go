@@ -21,6 +21,15 @@ func NewProductHandler() *ProductHandler {
 func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	limitStr := r.URL.Query().Get("limit")
 	offsetStr := r.URL.Query().Get("offset")
+	sortBy := r.URL.Query().Get("sort_by")
+	orderBy := r.URL.Query().Get("order_by")
+	if orderBy == "" {
+		orderBy = "desc"
+	}
+
+	if sortBy == "" {
+		sortBy = "created_at"
+	}
 
 	if limitStr == "" || offsetStr == "" {
 		res.Error(w, fmt.Errorf("error while decoding query params").Error(), http.StatusBadRequest)
@@ -30,7 +39,7 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	limit, _ := strconv.Atoi(limitStr)
 	offset, _ := strconv.Atoi(offsetStr)
 
-	products, err := db.GetProducts(limit, offset)
+	products, err := db.GetProducts(limit, offset, sortBy, orderBy)
 	if err != nil {
 		res.Error(w, err.Error(), http.StatusInternalServerError)
 		return

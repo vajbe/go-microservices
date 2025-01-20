@@ -21,7 +21,9 @@ type ProductResponse struct {
 }
 
 type ProductListingResponse struct {
-	Result []ProductResponse `json:"result"`
-	Offset int               `json:"offset"`
-	Limit  int               `json:"limit"`
+	Result  []ProductResponse `json:"result"`
+	Offset  int               `json:"offset"`
+	Limit   int               `json:"limit"`
+	OrderBy string            `json:"order_by"`
+	SortBy  string            `json:"sort_by"`
 }
