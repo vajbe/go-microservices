@@ -19,6 +19,7 @@ func RegisterProductRoutes(router *mux.Router) {
 		/* 		{"GET", "/products", userHandler.GetUsers},
 		   		{"GET", "/products/{id}", userHandler.GetUser}, */
 		{"POST", "/products", productHandler.AddProduct},
+		{"GET", "/products", productHandler.GetProducts},
 	}
 
 	// Register all routes in a loop to avoid repetition

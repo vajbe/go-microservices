@@ -16,14 +16,14 @@ func NewProductHandler() *ProductHandler {
 	return &ProductHandler{}
 }
 
-/* func (h *ProductHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := db.GetUsers()
+func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
+	products, err := db.GetProducts()
 	if err != nil {
 		res.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	res.Success(w, "Products have been retrieved successfully.", users)
-} */
+	res.Success(w, "Products have been retrieved successfully.", products)
+}
 
 func (h *ProductHandler) AddProduct(w http.ResponseWriter, r *http.Request) {
 	var newrProduct types.Product

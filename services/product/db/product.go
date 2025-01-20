@@ -27,35 +27,31 @@ func AddProduct(product types.Product) (types.ProductResponse, error) {
 	return response, nil
 }
 
-/*
-func GetUsers() ([]types.ProductResponse, error) {
+func GetProducts() ([]types.ProductResponse, error) {
 	pool := GetDBPool()
-	rows, err := pool.Query(context.Background(), "SELECT * FROM users")
+	rows, err := pool.Query(context.Background(), "SELECT ID, NAME, CATEGORY, PRICE, STOCK, DESCRIPTION FROM products")
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
 	defer rows.Close()
-	var users []types.Product
+	var products []types.ProductResponse
 	for rows.Next() {
-		var user types.Product
-		var createdAt int64
-		var id int
+		var product types.ProductResponse
 		// Scan each row into the User struct
-		err := rows.Scan(&id, &user.Name, &user.Email, &createdAt)
+		err := rows.Scan(&product.Id, &product.Name, &product.Category, &product.Price, &product.Stock, &product.Description)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
-		user.CreatedAt = createdAt
-		users = append(users, user)
+		products = append(products, product)
 	}
 	// Check for errors after the loop
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("error iterating rows: %w", err)
 	}
-	return users, nil
+	return products, nil
 }
 
-func GetUser(user types.User) (types.User, error) {
+/*func GetUser(user types.User) (types.User, error) {
 	pool := GetDBPool()
 	query := "SELECT * FROM users where id=$1"
 	var resultUser types.User
