@@ -19,3 +19,9 @@ type ProductResponse struct {
 	Stock       int     `json:"stock"`
 	Category    string  `json:"category"`
 }
+
+type ProductListingResponse struct {
+	Result []ProductResponse `json:"result"`
+	Offset int               `json:"offset"`
+	Limit  int               `json:"limit"`
+}

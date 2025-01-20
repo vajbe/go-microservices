@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
+	"strconv"
 
 	"go-microservices/products/db"
 	res "go-microservices/products/middleware"
@@ -17,7 +19,18 @@ func NewProductHandler() *ProductHandler {
 }
 
 func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := db.GetProducts()
+	limitStr := r.URL.Query().Get("limit")
+	offsetStr := r.URL.Query().Get("offset")
+
+	if limitStr == "" || offsetStr == "" {
+		res.Error(w, fmt.Errorf("error while decoding query params").Error(), http.StatusBadRequest)
+		return
+	}
+
+	limit, _ := strconv.Atoi(limitStr)
+	offset, _ := strconv.Atoi(offsetStr)
+
+	products, err := db.GetProducts(limit, offset)
 	if err != nil {
 		res.Error(w, err.Error(), http.StatusInternalServerError)
 		return
