@@ -23,6 +23,7 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	offsetStr := r.URL.Query().Get("offset")
 	sortBy := r.URL.Query().Get("sort_by")
 	orderBy := r.URL.Query().Get("order_by")
+	name := r.URL.Query().Get("name")
 	if orderBy == "" {
 		orderBy = "desc"
 	}
@@ -39,7 +40,7 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	limit, _ := strconv.Atoi(limitStr)
 	offset, _ := strconv.Atoi(offsetStr)
 
-	products, err := db.GetProducts(limit, offset, sortBy, orderBy)
+	products, err := db.GetProducts(limit, offset, sortBy, orderBy, name)
 	if err != nil {
 		res.Error(w, err.Error(), http.StatusInternalServerError)
 		return

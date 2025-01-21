@@ -27,10 +27,19 @@ func AddProduct(product types.Product) (types.ProductResponse, error) {
 	return response, nil
 }
 
-func GetProducts(limit int, offset int, sortBy string, orderBy string) (types.ProductListingResponse, error) {
+func GetProducts(limit int, offset int, sortBy string, orderBy string, name string) (types.ProductListingResponse, error) {
 	pool := GetDBPool()
-	query := fmt.Sprintf("SELECT ID, NAME, CATEGORY, PRICE, STOCK, DESCRIPTION FROM products ORDER BY %s %s LIMIT $1 OFFSET $2", sortBy, orderBy)
-	rows, err := pool.Query(context.Background(), query, limit, offset)
+	query := fmt.Sprintf("SELECT ID, NAME, CATEGORY, PRICE, STOCK, DESCRIPTION FROM products "+
+		"WHERE NAME LIKE $3"+
+		" ORDER BY %s %s LIMIT $1 OFFSET $2", sortBy, orderBy)
+
+	if name == "" {
+		name = "%"
+	} else {
+		name = "%" + name + "%"
+	}
+
+	rows, err := pool.Query(context.Background(), query, limit, offset, name)
 	if err != nil {
 		return types.ProductListingResponse{Offset: 0, Limit: 0, Result: []types.ProductResponse{}}, fmt.Errorf("failed to execute query: %w", err)
 	}
