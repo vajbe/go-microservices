@@ -9,8 +9,8 @@ type Product struct {
 }
 
 type Order struct {
-	ID            int       `json:"id"`             // Unique identifier for the order
-	UserID        int       `json:"user_id"`        // User who placed the order
+	ID            string    `json:"id"`             // Unique identifier for the order
+	UserID        string    `json:"user_id"`        // User who placed the order
 	OrderStatus   string    `json:"order_status"`   // Status of the order (PENDING, CONFIRMED, etc.)
 	TotalAmount   float64   `json:"total_amount"`   // Total cost of the order
 	PaymentStatus string    `json:"payment_status"` // Status of the payment (PENDING, PAID, etc.)

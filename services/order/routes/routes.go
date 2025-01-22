@@ -16,7 +16,7 @@ func RegisterOrderRoutes(router *mux.Router) {
 		path        string
 		handlerFunc func(http.ResponseWriter, *http.Request)
 	}{
-		{"POST", "/products", orderHandler.CreateOrder},
+		{"POST", "/order", orderHandler.CreateOrder},
 	}
 
 	// Register all routes in a loop to avoid repetition

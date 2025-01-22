@@ -37,6 +37,6 @@ func main() {
 	routes.RegisterOrderRoutes(router)
 
 	// Start server
-	log.Printf("Product Service running on port %s", SERVICE_CONFIG.Port)
+	log.Printf("Order Service running on port %s", SERVICE_CONFIG.Port)
 	log.Fatal(http.ListenAndServe(":"+SERVICE_CONFIG.Port, router))
 }

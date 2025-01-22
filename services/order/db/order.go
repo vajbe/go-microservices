@@ -22,7 +22,7 @@ func CreateOrder(order types.Order) (types.Order, error) {
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, created_at
 	`
-	var id int
+	var id string
 	var createdAt int64
 
 	// Insert the order with products JSON
