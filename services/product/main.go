@@ -80,13 +80,13 @@ func main() {
 func InitKafka(ctx context.Context) (*kafka.KafkaProducer, *kafka.KafkaConsumer) {
 	// Kafka broker and topic configuration
 	brokers := []string{"localhost:9092"}
-	topic := "orders"
+	topic := "products"
 
 	// Initialize producer
-	producer := kafka.NewKafkaProducer(brokers, "products")
+	producer := kafka.NewKafkaProducer(brokers, topic)
 
 	// Initialize consumer
-	consumer := kafka.NewKafkaConsumer(brokers, topic, "product-group")
+	consumer := kafka.NewKafkaConsumer(brokers, "orders", "product-group")
 
 	// Start consuming in the background
 	go consumer.Consume(ctx)

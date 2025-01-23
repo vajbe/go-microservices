@@ -2,6 +2,11 @@ package kafka
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+
+	"go-microservices/products/db"
+	"go-microservices/products/types"
 	"log"
 
 	"github.com/segmentio/kafka-go"
@@ -35,7 +40,25 @@ func (kc *KafkaConsumer) Consume(ctx context.Context) {
 			continue
 		}
 		log.Printf("In Product Service Message consumed: key=%s, value=%s\n", string(msg.Key), string(msg.Value))
+		handleProductUpdates(msg.Value)
 	}
+}
+
+func handleProductUpdates(msg []byte) {
+	var products types.Order
+	err := json.Unmarshal(msg, &products)
+	if err != nil {
+		fmt.Printf("\n err %s", err.Error())
+	}
+
+	for _, el := range products.Products {
+		product, err := db.GetProductById(el.ProductID)
+		if err != nil {
+			fmt.Printf("\n error occurred while fetching product details: %s", err.Error())
+		}
+		fmt.Printf("\n%+v", product)
+	}
+
 }
 
 // Close gracefully shuts down the consumer

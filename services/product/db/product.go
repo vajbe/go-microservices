@@ -77,3 +77,18 @@ func GetProducts(limit int, offset int, sortBy string, orderBy string, name stri
 	return resultUser, nil
 }
 */
+
+func GetProductById(Id string) (types.Product, error) {
+	pool := GetDBPool()
+
+	query := `SELECT NAME, DESCRIPTION, PRICE, STOCK, CATEGORY FROM PRODUCTS WHERE ID=$1`
+	var product types.Product
+	err := pool.QueryRow(context.Background(), query, Id).Scan(&product.Name, &product.Description, &product.Price, &product.Stock, &product.Category)
+
+	if err != nil {
+		return types.Product{}, err
+	}
+
+	product.Id = Id
+	return product, nil
+}
