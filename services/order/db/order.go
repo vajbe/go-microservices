@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go-microservices/order/kafka"
 	"go-microservices/order/types"
 )
 
@@ -46,6 +47,15 @@ func CreateOrder(order types.Order) (types.Order, error) {
 		PaymentStatus: order.PaymentStatus,
 		Products:      order.Products,
 		CreatedAt:     createdAt,
+	}
+	kManger := kafka.GetKafkaManger()
+	kMsg, err := json.Marshal(createdOrder)
+	if err != nil {
+		fmt.Printf("Failed to marshal order message: %v", err)
+	}
+	err = kManger.Producer.Publish("order123", string(kMsg))
+	if err != nil {
+		fmt.Printf("Failed to publish message: %v", err)
 	}
 	return createdOrder, nil
 }

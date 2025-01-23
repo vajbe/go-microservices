@@ -36,6 +36,7 @@ func main() {
 	kafkaCtx, kafkaCancel := context.WithCancel(context.Background())
 	defer kafkaCancel()
 	producer, consumer := InitKafka(kafkaCtx)
+	kafka.SetKafkaManager(consumer, producer)
 
 	// Initialize router
 	router := mux.NewRouter()
