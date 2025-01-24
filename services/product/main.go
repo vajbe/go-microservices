@@ -79,7 +79,7 @@ func main() {
 
 func InitKafka(ctx context.Context) (*kafka.KafkaProducer, *kafka.KafkaConsumer) {
 	// Kafka broker and topic configuration
-	brokers := []string{"localhost:9092"}
+	brokers := []string{SERVICE_CONFIG.Kafka_URL}
 	topic := "products"
 
 	// Initialize producer

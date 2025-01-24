@@ -15,6 +15,7 @@ type Config struct {
 	Db_URL      string
 	Redis_URL   string
 	Schema_Path string
+	Kafka_URL   string
 }
 
 func Load() Config {
@@ -31,6 +32,7 @@ func Load() Config {
 			Db_URL:      getEnv("USER_SERVICE_DB_HOST", "localhost"),
 			Redis_URL:   getEnv("USER_SERVICE_REDIS_URL", "localhost:6379"),
 			Schema_Path: getEnv("USER_SERVICE_SCHEMA_PATH", "C:\\Users\\vivek\\Documents\\go-microservices\\services\\users\\db\\schema.sql"),
+			Kafka_URL:   getEnv("USER_SERVICE_KAFKA_URL", "localhost:9092"),
 		}
 	case "production":
 		cfg = Config{
@@ -41,6 +43,7 @@ func Load() Config {
 			Db_URL:      getEnv("USER_SERVICE_DB_HOST", "localhost"),
 			Redis_URL:   getEnv("USER_SERVICE_REDIS_URL", "localhost:6379"),
 			Schema_Path: getEnv("USER_SERVICE_SCHEMA_PATH", "C:\\Users\\vivek\\Documents\\go-microservices\\services\\users\\db\\schema.sql"),
+			Kafka_URL:   getEnv("USER_SERVICE_KAFKA_URL", "localhost:9092"),
 		}
 	default:
 		log.Fatalf("Unknown environment: %s", env)
