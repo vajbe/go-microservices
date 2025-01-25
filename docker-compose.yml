@@ -15,7 +15,7 @@ services:
     depends_on:
       - redis
       - postgres
-      - kafka
+      - kafka-service
 
   product-service:
     build:
@@ -27,11 +27,11 @@ services:
       - PRODUCT_SERVICE_DB_HOST=postgres
       - PRODUCT_SERVICE_SCHEMA_PATH=/app/db/schema.sql
       - PRODUCT_SERVICE_REDIS_URL=redis:6379
-      - PRODUCT_SERVICE_KAFKA_URL=kafka:9092
+      - PRODUCT_SERVICE_KAFKA_URL=kafka-service:9092
     depends_on:
       - redis
       - postgres
-      - kafka
+      - kafka-service
     networks:
       - app-network
   order-service:
@@ -44,11 +44,11 @@ services:
       - ORDER_SERVICE_DB_HOST=postgres
       - ORDER_SERVICE_SCHEMA_PATH=/app/db/schema.sql
       - ORDER_SERVICE_REDIS_URL=redis:6379
-      - ORDER_SERVICE_KAFKA_URL=kafka:9092
+      - ORDER_SERVICE_KAFKA_URL=kafka-service:9092
     depends_on:
       - redis
       - postgres
-      - kafka
+      - kafka-service
     networks:
       - app-network
   postgres:
@@ -57,13 +57,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: admin # Username
-      POSTGRES_PASSWORD: admin # Empty password
-      POSTGRES_DB: admin # Default database
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: admin
     volumes:
-      - pg_data:/var/lib/postgresql/data
-      - ./pg_hba.conf:/etc/postgresql/conf.d/pg_hba.conf # Mount custom pg_hba.conf
-    command: postgres -c "hba_file=/etc/postgresql/conf.d/pg_hba.conf" # Use custom pg_hba.conf
+      - ./pg_data:/var/lib/postgresql/data
+      - ./pg_hba.conf:/etc/postgresql/conf.d/pg_hba.conf
+    command: postgres -c "hba_file=/etc/postgresql/conf.d/pg_hba.conf"
     networks:
       - app-network
 
@@ -85,7 +85,7 @@ services:
     networks:
       - app-network
 
-  kafka:
+  kafka-service:
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
@@ -93,7 +93,7 @@ services:
       - "9092:9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-service:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:

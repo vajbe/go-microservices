@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o deployment/
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: order-service
+  name: order-service
+spec:
+  ports:
+    - name: "8082"
+      port: 8082
+      targetPort: 8082
+      nodePort: 30082 # Exposed port on the local machine
+  type: NodePort
+  selector:
+    io.kompose.service: order-service

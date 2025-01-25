@@ -1,0 +1,42 @@
+kubectl get services
+
+kubectl get pods -n default
+
+kubectl logs kafka-6cc8b8654b-qnm8p      
+
+kubectl apply -f .
+
+kubectl scale deployment --all --replicas=0
+
+kubectl delete all --all
+
+kompose convert -f docker-compose.yml -o deployment/
+
+kubectl apply -f zookeeper-deployment.yaml
+kubectl apply -f zookeeper-service.yaml
+
+kubectl apply -f kafka-service-deployment.yaml
+kubectl apply -f kafka-service-service.yaml
+
+
+kubectl apply -f order-service-deployment.yaml
+kubectl apply -f order-service-service.yaml
+
+kubectl apply -f kafka.yaml
+kubectl apply -f order-service.yaml
+kubectl apply -f postgres.yaml
+kubectl apply -f product-service.yaml
+kubectl apply -f redis.yaml
+kubectl apply -f user-service.yaml
+kubectl apply -f zookeeper.yaml
+
+kubectl scale deployment order-service --replicas=0
+
+docker tag go-microservices-order-service:latest vivekajbecorp/order-service:latest
+docker tag go-microservices-product-service:latest vivekajbecorp/product-service:latest
+docker tag go-microservices-user-service:latest vivekajbecorp/user-service:latest
+
+
+docker push vivekajbecorp/order-service:latest
+docker push vivekajbecorp/product-service:latest
+docker push vivekajbecorp/user-service:latest
