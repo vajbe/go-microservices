@@ -34,6 +34,7 @@ services:
       - kafka-service
     networks:
       - app-network
+
   order-service:
     build:
       context: ./services/order
@@ -51,6 +52,7 @@ services:
       - kafka-service
     networks:
       - app-network
+
   postgres:
     image: postgres:15
     container_name: postgres-db
@@ -98,15 +100,31 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - app-network
-  # auth-service:
-  #   build:
-  #     context: ./services/auth
-  #   ports:
-  #     - "8081:8080"
-  #   environment:
-  #     - AUTH_SERVICE_PORT=8080
-  #   networks:
-  #     - app-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - app-network
 
 networks:
   app-network:
@@ -114,3 +132,4 @@ networks:
 
 volumes:
   pg_data:
+  grafana-data:
