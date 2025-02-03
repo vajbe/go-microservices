@@ -1,4 +1,4 @@
-# **Go Based Microservices Demo:**
+# **Go Based Microservices:**
 
 #### Tech Stack:
 Go lang, Postgres DB, Kafka, Docker, Kubernetes, Redis
