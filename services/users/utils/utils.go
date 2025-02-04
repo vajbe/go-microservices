@@ -13,6 +13,8 @@ func GenerateJwtToken(username string) (string, error) {
 		jwt.MapClaims{
 			"username": username,
 			"iat":      time.Now().Unix(),
+			"kid":      username,
+			"iss":      "admin",
 		})
 
 	tokenString, err := token.SignedString(secretKey)

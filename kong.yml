@@ -24,8 +24,14 @@ services:
 plugins:
   - name: jwt
     service: product-service
-    enabled: true
+    enabled: false
     config:
-      key_claim_name: kid
+      # key_claim_name: kid
       claims_to_verify:
         - exp
+  - name: rate-limiting
+    service: user-service
+    config:
+      second: 5
+      hour: 10000
+      policy: local
