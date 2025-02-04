@@ -1,0 +1,31 @@
+_format_version: "3.0"
+
+services:
+  - name: user-service
+    url: http://user-service:8080
+    routes:
+      - name: user-route
+        paths:
+          - /users
+
+  - name: product-service
+    url: http://product-service:8081
+    routes:
+      - name: product-route
+        paths:
+          - /products
+
+  - name: order-service
+    url: http://order-service:8082
+    routes:
+      - name: order-route
+        paths:
+          - /orders
+plugins:
+  - name: jwt
+    service: product-service
+    enabled: true
+    config:
+      key_claim_name: kid
+      claims_to_verify:
+        - exp
