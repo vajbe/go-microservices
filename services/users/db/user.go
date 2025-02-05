@@ -46,7 +46,7 @@ func AddUser(user types.User) (types.UserResponse, error) {
 
 func GetUsers() ([]types.User, error) {
 	pool := GetDBPool()
-	rows, err := pool.Query(context.Background(), "SELECT * FROM users")
+	rows, err := pool.Query(context.Background(), "SELECT ID, NAME, EMAIL, CREATED_AT FROM users")
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
@@ -55,13 +55,14 @@ func GetUsers() ([]types.User, error) {
 	for rows.Next() {
 		var user types.User
 		var createdAt int64
-		var id int
+		var id string
 		// Scan each row into the User struct
 		err := rows.Scan(&id, &user.Name, &user.Email, &createdAt)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 		user.CreatedAt = createdAt
+		user.Id = id
 		users = append(users, user)
 	}
 	// Check for errors after the loop

@@ -17,7 +17,7 @@ DB_PARAMS = {
 }
 
 # Number of records to generate
-TOTAL_PRODUCTS = 10_000_000
+TOTAL_PRODUCTS = 10_000
 
 # Define categories (expandable)
 CATEGORIES = ["Electronics", "Books", "Clothing", "Home Appliances", "Toys", "Sports", "Groceries"]
